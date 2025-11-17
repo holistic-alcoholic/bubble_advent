@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Новый год в Чумном форте</title>
+    <style>
+        body {
+            font-family: Georgia;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            min-height: 100vh;
+            margin: 0 auto;
+            background-color: #1f1e1c;
+            color: white;
+            text-align: center;
+            max-width: 600px;
+        }
+        
+        .game-container {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-radius: 5px;
+            position: relative;
+        }
+        
+        .game-field {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+            gap: 2px;
+            height: 500px;
+            aspect-ratio: 1 / 1;
+            background-color: #ddd;
+            border: 8px solid #ddd;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .cell {
+            background-color: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+        
+        .cell:hover {
+            background-color: #ddd;
+            cursor: pointer;
+        }
+        
+        .s {
+            width: 95%;
+            height: 95%;
+            background-image: url('assets/chibi_s.jpeg');
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+
+        .oleg {
+            width: 95%;
+            height: 95%;
+            background-image: url('assets/chibi_o.jpeg');
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+
+        .ball {
+            width: 65%;
+            height: 65%;
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+
+        .garland {
+            width: 95%;
+            height: 95%;
+            background-image: url('assets/garland.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+
+        .bird {
+            width: 95%;
+            height: 95%;
+            background-image: url('assets/chibi_bird.jpeg');
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+        
+        .object {
+            width: 80%;
+            height: 80%;
+        }
+        
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background-color: #ff6600;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #ff8533;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: #2a2a2a;
+            width: 90%;
+            max-width: 700px;
+            border-radius: 15px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        
+        .close-btn {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-body {
+            display: flex;
+            padding: 50px;
+            gap: 50px;
+            flex: 1;
+        }
+        
+        .speaker-display {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .speaker-large {
+            width: 150px;
+            height: 190px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            /*background-image: url('assets/test_bird1.jpeg');*/
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+        
+        .speaker-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #ffcc00;
+            height: 20px;
+        }
+        
+        .dialogue-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            line-height: 1.5;
+            gap: 10px;
+        }
+
+        .dialogue-info {
+            text-align: left;
+            align-items: top;
+            color: white;
+            position: relative;
+        }
+        
+        .dialogue-text {
+            background-color: #333;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: left;
+            align-items: top;
+            color: white;
+            position: relative;
+        }
+
+        .dialogue-text::before {
+            content: '';
+            position: absolute;
+            left: -13px;
+            top: 20px;
+            width: 0;
+            height: 0;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-right: 13px solid #333;
+        }
+        
+        .dialogue-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .dialogue-btn {
+            padding: 10px 20px;
+            background-color: #444;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            max-width: 100%;
+        }
+        
+        .dialogue-btn:hover {
+            background-color: #555;
+        }
+
+        .door {
+            position: absolute;
+            height: 8px;
+            width: 16%;
+            top: 0;
+            left: 8px;
+            background-color: #323232;
+            cursor: pointer;
+        }
+
+        h4 {
+            margin-top: 30px;
+        }
+
+        .inventory {
+            background-color: #aaa;
+            border: 2px solid #eee;
+            padding: 10px;
+            border-radius: 5px;
+            height: 45px;
+            display: flex;
+        }
+
+        .inventory-item {
+            height: 95%;
+            aspect-ratio: 1 / 1;
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+
+        .info {
+            padding: 15px;
+            background-color: #333;
+        }
+        
+        @media (max-width: 600px) {
+            .game-field {
+                height: 90vw;
+            }
+            
+            .modal-body {
+                flex-direction: column;
+                gap: 20px;
+                padding: 20px;
+                overflow: auto;
+            }
+            
+            .speaker-display {
+                flex-direction: row;
+                justify-content: flex-start;
+                gap: 25px;
+            }
+            
+            .speaker-large {
+                width: 80px;
+                height: 100px;
+                margin-bottom: 0;
+            }
+
+            .dialogue-container {
+                margin-top: 0;
+            }
+
+            .dialogue-text {
+                margin-bottom: 15px;
+            }
+
+            .dialogue-text::before {
+                left: 20px;
+                top: -13px;
+                border-left: 10px solid transparent;
+                border-bottom: 13px solid #333;
+                border-right: 10px solid transparent;
+                border-top: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h2>Новый год в Чумном форте</h2>
+    
+    <p class="info">Играй за Сережу, который застрял на Новый год в психушке со злобной личностью в голове. Может, у тебя получится выбраться наружу пораньше?</p>
+    
+    <div class="game-container" id="gameContainer">
+        <div class="game-field" id="gameField"></div>
+    </div>
+
+    <div id="inventory-screen">
+    <h4>Инвентарь</h4>
+
+    <div class="inventory" id="inventory">
+    </div>
+    </div>
+
+    <!-- Cutscene Modal -->
+    <div class="modal" id="cutsceneModal">
+        <div class="modal-content" id="modalContent">
+            <div class="modal-body">
+                <div class="speaker-display">
+                    <div class="speaker-large" id="modalSpeaker"></div>
+                    <div class="speaker-name" id="speakerName">Имя</div>
+                </div>
+                <div class="dialogue-container">
+                    <div class="dialogue-info" id="dialogueInfo">
+                        Text
+                    </div>
+                    <div class="dialogue-text" id="dialogueText">
+                        Диалог
+                    </div>
+                    <div class="dialogue-options" id="dialogueOptions">
+                        <!-- здесь будут варианты ответа -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // ЛОГИКА ИГРЫ
+
+    // экран 3 — кабинет врача, всякие штуки, за которыми можно спрятаться и поразглядывать, мелкие штуки, которые можно взять. через небольшое время появляется дед мороз. если спрятаться, он говорит что-то смешное? если он тебя видит, то бежит к тебе, дальше диалог: можно поздороваться, можно пытаться убежать, можно начать пиздеть гирляндой. дед мороз скажет либо «Серый это правда ты» либо «Серый ты охуел меня гирляндой пиздить», после чего ты всматриваешься и видишь, что это Олег. нежный смешной диалог, можно полезть обниматься/целоваться, и тогда Олег говорит все ты мой главный подарок и я тебя отсюда УНЕСУ а можно попросить вернуть себя в палату, я же опасен для тебя (и мы знаем чем это реально кончится). 
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const gameField = document.getElementById('gameField');
+        const cutsceneModal = document.getElementById('cutsceneModal');
+        const modalSpeaker = document.getElementById('modalSpeaker');
+        const speakerName = document.getElementById('speakerName');
+        const dialogueInfo = document.getElementById('dialogueInfo');
+        const dialogueText = document.getElementById('dialogueText');
+        const dialogueOptions = document.getElementById('dialogueOptions');
+        const inventory = document.getElementById('inventory');
+        
+        let s = { id: 's', row: 0, col: 0 };
+        let bird = { id: 'bird', row: 0, col: 0 };
+        let oleg = { id: 'oleg', row: null, col: null };
+
+        let door = null;
+
+        let cells = [];
+        let objects = [];
+        let paths = [];
+
+        let hasGarland = false;
+        let hasBalls = [];
+
+        let currentDialogue = null;
+
+        let currentSceneInd = 0;
+
+        let rowsCount;
+        let colsCount;
+
+        let eventRow = -1;
+        let eventCol = -1;
+
+        let birdAppeared = false;
+        let olegAppeared = false;
+        let recognizedOleg = false;
+
+        // dialogues
+
+        const birdDialogues = [
+            {
+                speaker: 'Птица',
+                avatar: `url('assets/test_bird1.jpeg')`,
+                dialogue: {
+                    text: null,
+                    question: 'Ох, неужели птенчик отрастил коготки и решил побороться за тело? Какая прелесть. Жаль, что надолго тебя не хватит... Или ты думал, что я пожалею тебя и отпущу? Нет, дорогой мой. Теперь главный тут не ты.<br><br>Но разве тебе не хочется сдаться? Зачем тебе оставаться здесь, сидеть взаперти, пока тебя мучают и ставят на тебе опыты? Ты же знаешь, только я могу тебя защитить. Только я смогу справиться с этим.',
+                    answers: [
+                        { 
+                            text: 'Сдаться Птице и отпустить контроль', 
+                            next: { 
+                                text: 'Ты сдаешься уговорам Птицы и отпускаешь контроль. Лучше полная чернота и бессознанка, чем продолжать осознавать, кто ты такой и что с тобой случилось. Пытаться что-то сделать с этим бессмысленно. Если повезет, ты так и проживешь на краю сознания, не ощущая ничего, и даже не заметишь вашей смерти...', 
+                                question: null,
+                                answers: [],
+                                callback: () => {
+                                    endGame('bad_gave_up')
+                                }
+                            }
+                        },
+                        { 
+                            text: 'Побороться за тело', 
+                            next: {
+                                text: 'Ты отказываешься слушать свою злобную тень, отворачиваешься и усиленно игнорируешь жуткую фигуру, и это... удается? Неужели таблетки доктора начали работать? Но нет, эта новая медсестра, кажется, наоборот сегодня забыла тебе их дать... Очень странно. Очень хорошо! Ведь ты давно не чувствовал себя настолько в сознании. Настолько... самим собой.',
+                                question: null, 
+                                answers: [],
+                                callback: () => {
+                                    document.getElementById('bird').remove();
+                                    bird.row = null;
+                                    bird.col = null;
+
+                                    // показать дверь 
+                                    document.getElementById('gameContainer').appendChild(door);
+                                    
+                                    
+                                }
+                            }
+                        }
+                    ],
+                    callback: null
+                }
+            },
+            {
+                speaker: 'Птица',
+                avatar: `url('assets/test_bird1.jpeg')`,
+                dialogue: {
+                    text: null,
+                    question: 'Ха-ха-ха, обманул! Никуда я не пущу тебя, солнце мое, мои дела здесь ещё не окончены... Ну-ка, давай, впускай меня обратно. Ты же не думал, что тебе взаправду удалось отобрать у меня контроль?',
+                    answers: [
+                        { 
+                            text: 'Сдаться Птице — моральных сил сопротивляться у тебя больше нет', 
+                            next: { 
+                                text: 'Ты не успеваешь и моргнуть, как тебя поглощает глубокая, чернильная темнота. Птица снова у руля — и ты не можешь ничего с этим поделать...', 
+                                question: null,
+                                answers: [],
+                                callback: () => {
+                                    endGame('bad_gave_up')
+                                }
+                            }
+                        },
+                        {
+                            condition: 'garland',
+                            text: 'Отпиздить Птицу гирляндой', 
+                            next: {
+                                text: 'Ты собираешься с силами и... а знаете что? Как же тебя невероятно достал этот пернатый монстр. Нахер пацифизм, у тебя есть гирлянда, и ты не боишься применить её в деле.',
+                                question: 'Ай! Ой! Ты чего делаешь? Ты охренел вообще? Да я же галлюцинация! Меня так нельзя! Да ты... Хорошо! Всё!! Я сваливаю, понял? Не очень-то и хотелось!!!', 
+                                answers: [],
+                                callback: () => {
+                                    document.getElementById('bird').remove();
+                                    bird.row = null;
+                                    bird.col = null;
+                                }
+                            }
+                        },
+                        {
+                            condition: 'ball',
+                            text: 'Бросить в Птицу ёлочным шаром', 
+                            next: {
+                                text: 'Ты собираешься с силами и... а знаете что? Как же тебя невероятно достал этот пернатый монстр. Нахер пацифизм! Сейчас кааак зарядишь ему шариком прямо в голову, будет знать, куда птицам лететь зимовать...',
+                                question: 'Ай! Ой! Ты чего делаешь? Ты охренел вообще? Да я же галлюцинация! Меня так нельзя! Да ты... Хорошо! Всё!! Я сваливаю, понял? Не очень-то и хотелось!!!', 
+                                answers: [],
+                                callback: () => {
+                                    let ballID = hasBalls.pop();
+                                    document.getElementById(ballID + 'item').remove();
+
+                                    document.getElementById('bird').remove();
+                                    bird.row = null;
+                                    bird.col = null;
+                                }
+                            }
+                        }
+                    ],
+                    callback: null
+                }
+            }
+        ]
+
+        const birdAppearance = {
+            speaker: 'Птица',
+            avatar: `url('assets/test_bird1.jpeg')`,
+            dialogue: {
+                text: null,
+                question: 'БУ!!<br><br>Не ожидал? Ну как же, мой хороший, разве ты правда верил, что от меня так просто можно избавиться?... Ха! Какой наивный птенчик. Ну что ты, не стесняйся, подойди ближе. Ты же хочешь выйти наружу, правда? Может быть, я тебе помогу. Даже на выход укажу — вот же он! Видишь, какой я добрый?',
+                answers: [],
+                callback: null
+            }
+        }
+
+        const olegAppearance = {
+            speaker: 'Дед Мороз',
+            avatar: `url('assets/chibi_o.jpeg')`,
+            dialogue: {
+                text: 'Дверь в углу открывается, и в комнату заходит... серьезно? Дед Мороз?! Пока ты сидел-страдал в своей палате, эти... особо одаренные сотрудники больницы устроили себе полноценный Новый год??<br><br>Но что с ним делать-то?',
+                question: null,
+                answers: [
+                    {
+                        text: "Замереть и не подавать виду",
+                        next: {
+                            text: 'И правильно. Лучше, чтоб тебя никто не заметил, мало ли кто это. Из-за бороды и костюма вообще не разглядеть.',
+                            question: null,
+                            answers: [],
+                            callback: null
+                        }
+                    },
+                    {
+                        condition: 'ball',
+                        text: "Кинуть в Деда Мороза ёлочным шаром",
+                        next: {
+                            text: 'Ты целишься и... Попал! Надо было идти не в программисты, а в баскетболисты! Получай, Дед Мороз!<br><br>Подождите, он разворачивается...',
+                            question: null,
+                            answers: [
+                                {
+                                    text: "Ааа, а прятаться-то где?",
+                                    next: {
+                                        text: null,
+                                        question: 'Что?... Серый, ты охренел?!',
+                                        answers: [
+                                            {
+                                                text: "ОЛЕГ?!",
+                                                next: {
+                                                    text: 'Дед Мороз приспускает бороду и... это правда Олег? Живой? Настоящий?!<br><br>Нет, не может... снова галлюцинация? Надо подойти ближе, чтобы точно узнать.',
+                                                    question: null,
+                                                    answers: [],
+                                                    callback: () => {
+                                                        recognizedOleg = true;
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        callback: null
+                                    }
+                                }
+                            ],
+                            callback: () => {
+                                const ballID = hasBalls.pop();
+
+                                document.getElementById(ballID + 'item').remove();
+                            }
+                        }
+                    }
+                ],
+                callback: null
+            }
+        }
+
+        const doorDialogues = [
+            {
+                speaker: null,
+                avatar: 'none',
+                dialogue: {
+                    text: 'Впервые за долгое время с настолько просветлевшей головой, ты приглядываешься внимательнее, и кусок стены будто бы выпирает там, где не должен был быть?',
+                    question: null,
+                    answers: [
+                        {
+                            text: "Толкнуть стену",
+                            next: {
+                                text: 'Стена поддается! Ты надавливаешь сильнее, и — о чудо! — перед тобой открывается проход в коридор.<br><br>Больше никакого смиренного ожидания новых мучений — пришло время выбираться отсюда.',
+                                question: null,
+                                answers: [],
+                                callback: initSecondScreen
+                            }
+                        }
+                    ],
+                    callback: null
+                }
+            },
+            {
+                speaker: null,
+                avatar: 'none',
+                dialogue: {
+                    text: 'Птица, капитально охреневший от твоей отчаянной агрессии, растворяется в воздухе — будто и не было его никогда. За ним — дверь. Кажется, даже незапертая.',
+                    question: null,
+                    answers: [
+                        {
+                            text: "Открыть дверь",
+                            next: {
+                                text: 'Проход открыт! Ещё немного — и ты свободен. Главное, не попасться санитарам...',
+                                question: null,
+                                answers: [],
+                                callback: initThirdScreen
+                            }
+                        }
+                    ],
+                    callback: null
+                }
+            }
+        ]
+
+        const objectDialogues = [
+            {
+                speaker: null,
+                avatar: 'none',
+                dialogue: {
+                    text: 'На полу лежит... гирлянда? Кажется, сотрудники больницы украшали ёлку, а лишнее сбросили в этом коридоре... Может быть, взять её себе?',
+                    question: null,
+                    answers: [
+                        {
+                            text: "Оставить где лежало",
+                            next: {
+                                text: 'И действительно, зачем тебе эта гирлянда. Куда тебе её вешать? И с кем?...',
+                                question: null,
+                                answers: [],
+                                callback: null
+                            }
+                        },
+                        {
+                            text: "Засунуть за ворот смирительной рубашки",
+                            next: {
+                                text: 'И действительно, вещь полезная, пригодится. Если б у тебя ещё была ёлка... и квартира, куда ёлку поставить... и с кем праздновать Новый год... Так, об этом лучше не думать. Сначала побег, остальное потом!',
+                                question: null,
+                                answers: [],
+                                callback: () => {
+                                    hasGarland = true;
+
+                                    const item = document.createElement('div');
+                                    item.className = 'inventory-item';
+                                    item.id = 'garlandItem';
+                                    item.style.backgroundImage = `url('assets/garland.png')`;
+                                    inventory.appendChild(item);
+
+                                    document.getElementById('garland').remove();
+                                    let index = -1;
+                                    for (let i = 0; i < objects.length; i++) {
+                                        if (objects[i].id === 'garland') {
+                                            index = i;
+                                            break;
+                                        }
+                                    }
+                                    if (index != -1) {
+                                        objects.splice(index, 1);
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    callback: null
+                }
+            },
+            {
+                speaker: null,
+                avatar: 'none',
+                dialogue: {
+                    text: 'На полу лежит... ёлочный шарик? Кажется, сотрудники больницы украшали ёлку, а лишнее сбросили в этом коридоре... Может быть, взять шарик себе?',
+                    question: null,
+                    answers: [
+                        {
+                            text: "Оставить где лежало",
+                            next: {
+                                text: 'И действительно, зачем тебе этот шарик. У тебя же ни ёлки, ни дома! Его брать — только сожалеть о несбывшемся...',
+                                question: null,
+                                answers: [],
+                                callback: null
+                            }
+                        },
+                        {
+                            text: "Засунуть за ворот смирительной рубашки",
+                            next: {
+                                text: 'И действительно, вещь полезная, пригодится. Если б у тебя ещё была ёлка... и квартира, куда ёлку поставить... и с кем праздновать Новый год... Так, об этом лучше не думать. Сначала побег, остальное потом!',
+                                question: null,
+                                answers: [],
+                                callback: () => {
+                                    const ball = cells[eventRow][eventCol].children[0];
+
+                                    hasBalls.push(ball.id);
+
+                                    const item = document.createElement('div');
+                                    item.className = 'inventory-item';
+                                    item.id = ball.id + 'item';
+                                    item.style.backgroundImage = `url('assets/${ball.id}.png')`;
+                                    inventory.appendChild(item);
+
+                                    let index = -1;
+                                    for (let i = 0; i < objects.length; i++) {
+                                        if (objects[i].id === ball.id) {
+                                            index = i;
+                                            break;
+                                        }
+                                    }
+                                    if (index != -1) {
+                                        objects.splice(index, 1);
+                                    }
+
+                                    ball.remove();
+                                }
+                            }
+                        }
+                    ],
+                    callback: null
+                }
+            }
+        ]
+
+        const hugOleg = {
+            text: "Обнять Олега",
+            next: {
+                text: 'Может быть, все-таки глюк? Ты зажмуриваешься и бросаешься ему на шею, шепча про себя: пусть бы настоящий, пусть бы настоящий... Теплые руки мягко обхватывают тебя и прижимают к себе.',
+                question: 'Ну ты чего... Здесь я, здесь, все хорошо. Давай выбираться отсюда, а, пока голубь твой ощипанный не проснулся?',
+                answers: [
+                    {
+                        text: "Вытащи меня отсюда, пожалуйста.",
+                        next: {
+                            text: 'Олег сжимает тебя крепче, а потом отпускает, нащупав твою руку.',
+                            question: 'Конечно. Там ребята ждут, еще немного, и ты будешь в безопасности. Я тебе обещаю.',
+                            answers: [],
+                            callback: () => { endGame('good_hug'); }
+                        }
+                    },
+                    {
+                        text: "Подожди, подожди. Я не уверен, что...",
+                        next: {
+                            text: 'Больше всего на свете ты хочешь выбраться из этого ужасного места вместе с Олегом, настоящим, живым Олегом, но в голову закрадывается мысль: а что если Птица снова вернется? Теперь тебе есть, что терять.',
+                            question: 'Серый, давай быстрее. Я камеры только на полчаса вырубил, если нас застанут — станет сложнее.',
+                            answers: [
+                                {
+                                    text: "Нет, Олеж, мне нужно остаться здесь.",
+                                    next: {
+                                        text: 'Олег смотрит на тебя неверящими глазами и становится неимоверно растерянным... Тебе совсем не хочется оставаться тут, но ты знаешь — так будет лучше. И продолжаешь уговаривать его, стараясь заставить голос не дрожать, пока тот только кивает и смотрит взглядом побитого щенка. И в конце концов соглашается.<br><br>Он всегда с тобой соглашался.',
+                                        question: null,
+                                        answers: [],
+                                        callback: () => {
+                                            endGame('bad_decided_to_stay');
+                                        }
+                                    }
+                                },
+                                {
+                                    text: "Хорошо. Хорошо, пойдем.",
+                                    next: {
+                                        text: 'Тебе все еще очень страшно, что Птица снова отберет себе контроль и навредит Олегу, но... вы же справитесь, правда? Вместе. Обязательно справитесь.',
+                                        question: null,
+                                        answers: [],
+                                        callback: () => {
+                                            endGame('good_hug');
+                                        }
+                                    }
+                                }
+                            ],
+                            callback: null
+                        }
+                    }
+                ],
+                callback: null
+            }
+        }
+
+        const kissOleg = {
+            text: "Поцеловать Олега",
+            next: {
+                text: 'Он настоящий. Он же правда настоящий? Ты бросаешься ему на шею и целуешь. Олег сначала замирает на месте, но потом отвечает на поцелуй.<br><br>Когда вы отстраняетесь, уши у него красные — в цвет костюма.<br><br>Ах да. Вы же раньше этого не делали.',
+                question: 'А. Э. Я... я тебя тоже? В смысле. Рад видеть? И... блин, нам же... Серый, валим отсюда, я камеры только на полчаса отрубил! Остальное потом. Хорошо?',
+                answers: [
+                    {
+                        text: "Хорошо.",
+                        next: {
+                            text: 'Ты хватаешь Олега за руку, совсем как в детстве, и, не удержавшись, подносишь ваши сомкнутые ладони ко рту, легонько целуя костяшки.',
+                            question: 'Серый! Мне еще мозговые клетки нужны для побега. Подожди чуть-чуть, мои ребята нас ждут на выходе.',
+                            answers: [],
+                            callback: () => { endGame('good_kiss'); }
+                        }
+                    },
+                    {
+                        text: "Подожди, подожди. Я не уверен, что...",
+                        next: {
+                            text: 'Больше всего на свете ты хочешь выбраться из этого ужасного места вместе с Олегом, настоящим, живым Олегом, но в голову закрадывается мысль: а что если Птица снова вернется? Теперь тебе есть, что терять.',
+                            question: 'Серый, быстрее, ну. Если нас застанут сейчас — станет сложнее.',
+                            answers: [
+                                {
+                                    text: "Нет, Олеж, мне нужно остаться здесь.",
+                                    next: {
+                                        text: 'Тебе совсем не хочется оставаться тут, но ты знаешь — так будет лучше. И продолжаешь уговаривать его, стараясь заставить голос не дрожать... Олег растерянно смотрит, но потом—',
+                                        question: 'Нет. Я тебя тут не оставлю, хорошо? Я больше вообще тебя не оставлю, хоть стреляй в меня. Мы справимся, Сереж. Пожалуйста. Верь мне.',
+                                        answers: [
+                                            {
+                                                text: "Пойти с Олегом",
+                                                next: {
+                                                    text: 'Тебе все еще очень страшно, но Олег так смотрит... Ты хватаешь его за руку и киваешь. Вы справитесь.',
+                                                    question: null,
+                                                    answers: [],
+                                                    callback: () => {
+                                                        endGame('good_decided_to_stay');
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        callback: null
+                                    }
+                                },
+                                {
+                                    text: "Хорошо. Хорошо, пойдем.",
+                                    next: {
+                                        text: 'Тебе все еще очень страшно, что Птица снова отберет себе контроль и навредит Олегу, но... вы же справитесь, правда? Вместе. Обязательно справитесь.',
+                                        question: null,
+                                        answers: [],
+                                        callback: () => {
+                                            endGame('good_kiss');
+                                        }
+                                    }
+                                }
+                            ],
+                            callback: null
+                        }
+                    }
+                ],
+                callback: null
+            }
+        }
+
+        const olegDialogues = [
+            {
+                speaker: 'Олег',
+                avatar: `url('assets/chibi_o.jpeg')`,
+                dialogue: {
+                    text: 'Ты подходишь ближе и, еще не веря до конца, рассматриваешь человека напротив.<br><br>Это правда Олег.',
+                    question: 'Сереж?... Это реально ты? Или опять пернатая тварь?',
+                    answers: [
+                        {
+                            text: "Ущипнуть Олега за щеку (вдруг ненастоящий)",
+                            next: {
+                                text: null,
+                                question: 'Ай! Не, реально ты, тот мудак больнее щиплется... Серый, я пиздец как скучал.',
+                                answers: [hugOleg, kissOleg],
+                                callback: null
+                            }
+                        },
+                        hugOleg,
+                        kissOleg
+                    ],
+                    callback: null
+                }
+            }
+        ]
+
+        function getAlert(text) {
+            startCutscene({
+                speaker: null,
+                avatar: 'none',
+                dialogue: {
+                    text: text,
+                    question: null,
+                    answers: [],
+                    callback: null
+                }
+            });
+        }
+        
+        // Initialize the game
+        function initFirstScreen() {
+            rowsCount = 6;
+            colsCount = 6;
+
+            // Clear the game field
+            gameField.innerHTML = '';
+            gameField.style['grid-template-rows'] = `repeat(${rowsCount}, 1fr)`;
+            gameField.style['grid-template-columns'] = `repeat(${colsCount}, 1fr)`;
+
+            cells = [];
+            objects = [];
+            
+            for (let row = 0; row < rowsCount; row++) {
+                cells[row] = [];
+                for (let col = 0; col < colsCount; col++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.dataset.row = row;
+                    cell.dataset.col = col;
+                    
+                    // Add click event listener
+                    cell.addEventListener('click', handleCellClick);
+                    
+                    gameField.appendChild(cell);
+                    cells[row][col] = cell;
+                }
+            }
+
+            paths = new Array(rowsCount).fill(0).map(() => new Array(colsCount).fill(null));
+            
+            // Place S in top-left corner
+            s.row = 0;
+            s.col = 0;
+            updatePosition(s);
+
+            bird.row = rowsCount - 1;
+            bird.col = colsCount - 1;
+            updatePosition(bird);
+
+            // create door
+            door = document.createElement('div');
+            door.className = 'door';
+            door.addEventListener('click', handleDoorClick);
+        }
+
+        function initSecondScreen() {
+            currentSceneInd++;
+
+            rowsCount = 8;
+            colsCount = 4;
+
+            // Clear the game field
+            gameField.innerHTML = '';
+            gameField.style['grid-template-rows'] = `repeat(${rowsCount}, 1fr)`;
+            gameField.style['grid-template-columns'] = `repeat(${colsCount}, 1fr)`;
+            gameField.style['aspect-ratio'] = '1 / 2';
+
+
+            cells = [];
+            objects = [];
+            
+            for (let row = 0; row < rowsCount; row++) {
+                cells[row] = [];
+                for (let col = 0; col < colsCount; col++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.dataset.row = row;
+                    cell.dataset.col = col;
+                    
+                    // Add click event listener
+                    cell.addEventListener('click', handleCellClick);
+                    
+                    gameField.appendChild(cell);
+                    cells[row][col] = cell;
+                }
+            }
+
+            paths = new Array(rowsCount).fill(0).map(() => new Array(colsCount).fill(null));
+            
+            s.row = rowsCount - 1;
+            s.col = 1;
+            updatePosition(s);
+
+            // гирлянда
+            const garl = document.createElement('div');
+            garl.className = 'garland';
+            garl.id = 'garland';
+            cells[1][colsCount - 1].appendChild(garl);
+            objects.push({ id: 'garland', row: 1, col: colsCount - 1 });
+
+            // шарики
+            for (let i = 1; i <= 5; i++) {
+                const ball = document.createElement('div');
+                ball.className = 'ball';
+                ball.id = 'ball' + i;
+                ball.style['background-image'] = `url('assets/ball${i}.png')`;
+
+                let ballRow, ballCol;
+
+                ballRow = Math.floor(Math.random() * (rowsCount - 2)) + 1; // random from 1 to rowsCount - 2
+                ballCol = Math.floor(Math.random() * colsCount); // from 0 to rowsCount - 1
+
+                while (cells[ballRow][ballCol].children.length > 0) {
+                    ballRow = Math.floor(Math.random() * (rowsCount - 2)) + 1; // random from 1 to rowsCount - 2
+                    ballCol = Math.floor(Math.random() * colsCount); // from 0 to rowsCount - 1
+                }
+
+                cells[ballRow][ballCol].appendChild(ball);
+                objects.push({ id: ball.id, row: ballRow, col: ballCol });
+            }
+
+            // update door
+            door.style.width = '24%';
+
+            setTimeout(() => {
+                if (!birdAppeared) {
+                    bird.row = 0;
+                    bird.col = 0;
+                    updatePosition(bird);
+
+                    birdAppeared = true;
+
+                    startCutscene(birdAppearance);
+                }
+            }, 15000);
+        }
+
+        function initThirdScreen() {
+            currentSceneInd++;
+
+            rowsCount = 8;
+            colsCount = 8;
+
+            // Clear the game field
+            gameField.innerHTML = '';
+            gameField.style['grid-template-rows'] = `repeat(${rowsCount}, 1fr)`;
+            gameField.style['grid-template-columns'] = `repeat(${colsCount}, 1fr)`;
+            gameField.style['aspect-ratio'] = '1 / 1';
+
+            cells = [];
+            objects = [];
+            
+            for (let row = 0; row < rowsCount; row++) {
+                cells[row] = [];
+                for (let col = 0; col < colsCount; col++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.dataset.row = row;
+                    cell.dataset.col = col;
+                    
+                    // Add click event listener
+                    cell.addEventListener('click', handleCellClick);
+                    
+                    gameField.appendChild(cell);
+                    cells[row][col] = cell;
+                }
+            }
+
+            paths = new Array(rowsCount).fill(0).map(() => new Array(colsCount).fill(null));
+            
+            s.row = rowsCount - 1;
+            s.col = 2;
+            updatePosition(s);
+
+            // добавить мебель
+
+            // update door
+            door.style.width = '12%';
+
+            setTimeout(() => {
+                if (!olegAppeared) {
+                    oleg.row = 0;
+                    oleg.col = 0;
+                    updatePosition(oleg);
+
+                    olegAppeared = true;
+
+                    startCutscene(olegAppearance);
+                }
+            }, 15000);
+        }
+        
+        // Place character at specified position
+        function updatePosition(character) {
+            const char = document.getElementById(character.id);
+            if (char) {
+                cells[character.row][character.col].appendChild(char);
+            } else {
+                const char = document.createElement('div');
+                char.className = character.id;
+                char.id = character.id;
+                cells[character.row][character.col].appendChild(char);
+            }
+        }
+
+        function getObjectAt(row, col) {
+            for (let i = 0; i < objects.length; i++) {
+                if (objects[i].row === row && objects[i].col === col) {
+                    return objects[i];
+                }
+            }
+
+            return null;
+        }
+        
+        // Handle cell click
+        async function handleCellClick(event) {
+            const cell = event.currentTarget;
+            const row = parseInt(cell.dataset.row);
+            const col = parseInt(cell.dataset.col);
+
+            eventRow = row;
+            eventCol = col;
+
+            const object = getObjectAt(row, col);
+            
+            if (row === bird.row && col === bird.col) {
+                if (Math.abs(s.row - row) <= 1 && Math.abs(s.col - col) <= 1) {
+                    startCutscene(birdDialogues[currentSceneInd]);
+                } else {
+                    getAlert('Птица топорщится и машет крыльями, но будто не слышит тебя. Подойди поближе, чтобы поговорить с ним.');
+                }
+            } else if (row === oleg.row && col === oleg.col) {
+                if (Math.abs(s.row - row) <= 1 && Math.abs(s.col - col) <= 1) {
+                    startCutscene(olegDialogues[0]);
+                } else {
+                    getAlert('Голос от нервов у тебя совсем сел. Подойди поближе, чтобы нормально поговорить.');
+                }
+            } else if (object) {
+                if (Math.abs(s.row - row) <= 1 && Math.abs(s.col - col) <= 1) {
+                    if (object.id === 'garland') {
+                        startCutscene(objectDialogues[0]);
+                    } else {
+                        startCutscene(objectDialogues[1]);
+                    }
+                } else {
+                    getAlert('Кажется, тут что-то интересное... Подойди поближе, чтобы рассмотреть.');
+                }
+            } else if (row !== s.row || col !== s.col) {
+                await moveS(row, col);
+            }
+        }
+
+        function handleDoorClick(event) {
+            if (s.row === 0 && s.col === 0) {
+                startCutscene(doorDialogues[currentSceneInd]);
+            } else {
+                if (currentSceneInd === 0) {
+                    getAlert('Тебе кажется, что со стеной в одном из углов палаты что-то не то. Подойди поближе, чтобы рассмотреть повнимательнее.');
+                } else {
+                    getAlert('Ты видишь дверь дальше! Подойди поближе, чтобы попробовать выйти.');
+                }
+            }
+        }
+
+        // info is a dict with all the scene info
+        function startCutscene(info) {
+            // figure out speaker
+            if (info.speaker) {
+                modalSpeaker.style.display = 'initial';
+                modalSpeaker.style.backgroundImage = info.avatar;
+                speakerName.textContent = info.speaker;
+            } else {
+                modalSpeaker.style.display = 'none';
+                speakerName.textContent = '';
+            }
+
+            currentDialogue = info.dialogue;
+            
+            addDialogue();
+            
+            // Show modal
+            cutsceneModal.style.display = 'flex';
+            
+        }
+
+        function addDialogue() {
+            if (currentDialogue.text) {
+                dialogueInfo.innerHTML = currentDialogue.text;
+            } else {
+                dialogueInfo.innerHTML = '';
+            }
+
+            if (currentDialogue.question) {
+                dialogueText.innerHTML = currentDialogue.question;
+                dialogueText.style.display = 'initial';
+            } else {
+                dialogueText.innerHTML = '';
+                dialogueText.style.display = 'none';
+            }
+
+            dialogueOptions.innerHTML = "";
+
+            for (let answer of currentDialogue.answers) {
+                const hasCondition = 'condition' in answer;
+
+                if (!hasCondition || (answer.condition === 'garland' && hasGarland) || (answer.condition === 'ball' && hasBalls.length > 0)) {
+                    const button = document.createElement('button');
+                    button.className = 'dialogue-btn';
+                    button.innerHTML = answer.text;
+                    button.style.display = 'block';
+                    dialogueOptions.appendChild(button);
+
+                    button.addEventListener("click", () => {
+                        currentDialogue = answer.next;
+
+                        addDialogue();
+                    });
+                }
+            }
+
+            if (currentDialogue.answers.length == 0) {
+                const button = document.createElement('button');
+                button.className = 'close-btn';
+                button.innerHTML = '&times;';
+                button.id = 'closeModal';
+                document.getElementById('modalContent').appendChild(button);
+
+                button.addEventListener("click", () => {
+                    cutsceneModal.style.display = 'none';
+                    button.remove();
+                });
+            }
+
+            if (currentDialogue.callback) currentDialogue.callback();
+        }
+        
+        // Move character to new position with animation
+        async function moveS(targetRow, targetCol) {
+            // Calculate path (simple straight line for this implementation)
+            const path = calculatePath(s.row, s.col, targetRow, targetCol);
+
+            if (!path) {
+                getAlert('Туда нельзя пройти! Сначала убери мешающие предметы.');
+                return;
+            }
+            
+            // Animate movement along the path
+            await animateMovement(path);
+        }
+
+        function makePathGraph(startRow, startCol) {
+            for (let i = 0; i < rowsCount; i++) {
+                for (let j = 0; j < colsCount; j++) {
+                    paths[i][j] = null;
+                }
+            }
+
+            paths[startRow][startCol] = 'root';
+
+            let unvisited = new Array(rowsCount).fill(0).map(() => new Array(colsCount).fill(true));
+
+            let currentCells = [{r: startRow, c: startCol}];
+            unvisited[startRow][startCol] = false;
+
+            while (currentCells.length > 0) {
+                const first = currentCells[0];
+
+                const neighbors = [
+                    {r: first.r, c: first.c - 1},
+                    {r: first.r, c: first.c + 1},
+                    {r: first.r - 1, c: first.c},
+                    {r: first.r + 1, c: first.c}
+                ];
+
+                for (let neighbor of neighbors) {
+                    // cell exists and unvisited
+                    if (neighbor.r >= 0 && neighbor.r < rowsCount && neighbor.c >= 0 && neighbor.c < colsCount && unvisited[neighbor.r][neighbor.c]) {
+
+                        // cell taken by object
+                        const isObject = objects.some(obj => obj.row === neighbor.r && obj.col === neighbor.c);
+                        const isBird = neighbor.r === bird.row && neighbor.c === bird.col;
+
+                        if (!isObject && !isBird) {
+                            paths[neighbor.r][neighbor.c] = {r: first.r, c: first.c};
+                            currentCells.push(neighbor);
+                        }
+                        
+                        unvisited[neighbor.r][neighbor.c] = false;
+                    }
+                }
+
+                currentCells.shift();
+            }
+        }
+        
+        // Calculate path from current position to target
+        function calculatePath(startRow, startCol, targetRow, targetCol) {
+            makePathGraph(startRow, startCol);
+
+            if (paths[targetRow][targetCol] === null) {
+                return false;
+            }
+
+            const path = [];
+            let currentRow = targetRow;
+            let currentCol = targetCol;
+            
+            while (paths[currentRow][currentCol] != 'root') {
+                path.unshift({ row: currentRow, col: currentCol });
+
+                const parent = paths[currentRow][currentCol];
+                currentRow = parent.r;
+                currentCol = parent.c;
+            }
+            
+            return path;
+        }
+        
+        // Animate movement along the path
+        async function animateMovement(path) {
+            for (let cell of path) {
+                if (currentSceneInd === 1 && (!birdAppeared) && (cell.row === 1)) {
+                    bird.row = 0;
+                    bird.col = 0;
+                    updatePosition(bird);
+
+                    birdAppeared = true;
+
+                    startCutscene(birdAppearance);
+
+                    break;
+                } else if (currentSceneInd === 2 && (!olegAppeared) && (cell.row === 1)) {
+                    oleg.row = 0;
+                    oleg.col = 0;
+                    updatePosition(oleg);
+
+                    olegAppeared = true;
+
+                    startCutscene(olegAppearance);
+
+                    break;
+                }
+
+                s.row = cell.row;
+                s.col = cell.col;
+                updatePosition(s);
+
+                await sleep(150);
+            }
+        }
+
+        function endGame(ending) {
+            document.getElementById('inventory-screen').style.display = 'none';
+
+            switch (ending) {
+                case 'bad_gave_up':
+                    document.getElementById('gameContainer').innerHTML = '<p>Увы, ты остался в Чумном форте, так и не победив Птицу. Может, попробуешь еще раз?</p>';
+                    break;
+                case 'bad_decided_to_stay':
+                    document.getElementById('gameContainer').innerHTML = '<p>Увы, ты остался в Чумном форте. Птица исчез, но кто знает, когда он вернется и какие планы будет воплощать в жизнь... Но главное — Олег в безопасности. С ним ничего не может случиться, пока ты здесь, правда же?</p><p>Попробуй пройти игру еще раз.</p>';
+                    break;
+                case 'good_hug':
+                    document.getElementById('gameContainer').innerHTML = '<p>Олег ведет тебя наружу — оказывается, до выхода оставалось всего ничего! Вас никто не останавливает, а снаружи ждет лодка с друзьями Олега. Синеволосый парень что-то болтает над ухом, пока лысый водитель отправляет вас в путь...</p> <p>Ты укладываешь тяжелую голову Олегу на плечо. Все хорошо. Ты теперь в безопасности.</p>';
+                    break;
+                case 'good_kiss':
+                    document.getElementById('gameContainer').innerHTML = '<p>Олег ведет тебя наружу — оказывается, до выхода оставалось всего ничего! Вас никто не останавливает, а снаружи ждет лодка с друзьями Олега. Синеволосый парень что-то болтает над ухом, пока лысый водитель отправляет вас в путь...</p> <p>Ты укладываешь тяжелую голову Олегу на плечо, а он приобнимает тебя крепче и оставляет несмелый поцелуй на макушке. Все хорошо. Олег с тобой. Ты теперь в безопасности.</p>';
+                    break;
+                case 'good_decided_to_stay':
+                    document.getElementById('gameContainer').innerHTML = '<p>Олег ведет тебя наружу — оказывается, до выхода оставалось всего ничего! Вас никто не останавливает, а снаружи ждет лодка с друзьями Олега. Синеволосый парень что-то болтает над ухом, пока лысый водитель отправляет вас в путь...</p> <p>Ты с опаской смотришь в воду: что покажет твое отражение? Но Олег обнимает тебя и оставляет несмелый поцелуй на макушке. Все хорошо. Он с тобой. Ты теперь в безопасности.</p>';
+                    break;
+            }
+            document.getElementById('gameContainer').innerHTML += "<button onclick='window.location.reload()'>Сыграть заново</button>";
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+        
+        // Initialize the game
+        initFirstScreen();
+    });
+    </script>
+</body>
+</html>
