@@ -1372,6 +1372,8 @@
                 s.col = cell.col;
                 updatePosition(s);
 
+                await sleep(150);
+
                 if (oleg.row === s.row && Math.abs(oleg.col - s.col) === 1 || oleg.col === s.col && Math.abs(oleg.row - s.row) === 1) {
                     olegIsMoving = false;
 
@@ -1383,62 +1385,62 @@
 
                     return;
                 }
-
-                await sleep(150);
             }
         }
 
         async function moveOleg() {
-            olegIsMoving = true;
-            while (olegIsMoving) {
-                let newRow = oleg.row;
-                let newCol = oleg.col;
+            setTimeout(async () => {
+                olegIsMoving = true;
+                while (olegIsMoving) {
+                    let newRow = oleg.row;
+                    let newCol = oleg.col;
 
-                const dir = Math.floor(Math.random() * 4);
-                switch (dir) {
-                    case 0:
-                        if (oleg.row != 0) {
-                            newRow--;
+                    const dir = Math.floor(Math.random() * 4);
+                    switch (dir) {
+                        case 0:
+                            if (oleg.row != 0) {
+                                newRow--;
+                            }
+                            break;
+                        case 1:
+                            if (oleg.col != colsCount - 1) {
+                                newCol++;
+                            }
+                            break;
+                        case 2:
+                            if (oleg.row != rowsCount - 1) {
+                                newRow++;
+                            }
+                            break;
+                        case 3:
+                            if (oleg.col != 0) {
+                                newCol--;
+                            }
+                            break;
+                    }
+
+                    const isObject = objects.some(obj => obj.row === newRow && obj.col === newCol);
+                    const isS = newRow === s.row && newCol === s.col;
+
+                    if (!isObject && !isS) {
+                        oleg.row = newRow;
+                        oleg.col = newCol;
+                        updatePosition(oleg);
+                    }
+
+                    await sleep(600);
+
+                    if (oleg.row === s.row && Math.abs(oleg.col - s.col) === 1 || oleg.col === s.col && Math.abs(oleg.row - s.row) === 1) {
+                        olegIsMoving = false;
+
+                        if (recognizedOleg) {
+                            startCutscene(olegMainConvo);
+                        } else {
+                            startCutscene(olegFoundYou);
                         }
-                        break;
-                    case 1:
-                        if (oleg.col != colsCount - 1) {
-                            newCol++;
-                        }
-                        break;
-                    case 2:
-                        if (oleg.row != rowsCount - 1) {
-                            newRow++;
-                        }
-                        break;
-                    case 3:
-                        if (oleg.col != 0) {
-                            newCol--;
-                        }
-                        break;
-                }
-
-                const isObject = objects.some(obj => obj.row === newRow && obj.col === newCol);
-                const isS = newRow === s.row && newCol === s.col;
-
-                if (!isObject && !isS) {
-                    oleg.row = newRow;
-                    oleg.col = newCol;
-                    updatePosition(oleg);
-                }
-
-                if (oleg.row === s.row && Math.abs(oleg.col - s.col) === 1 || oleg.col === s.col && Math.abs(oleg.row - s.row) === 1) {
-                    olegIsMoving = false;
-
-                    if (recognizedOleg) {
-                        startCutscene(olegMainConvo);
-                    } else {
-                        startCutscene(olegFoundYou);
                     }
                 }
-
-                await sleep(600);
-            }
+            }, 5000);
         }
 
         function endGame(ending) {
