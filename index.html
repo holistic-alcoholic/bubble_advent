@@ -32,25 +32,26 @@
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             grid-template-rows: repeat(4, 1fr);
-            gap: 2px;
+            gap: 0;
             height: 500px;
             aspect-ratio: 1 / 1;
-            background-color: #ddd;
-            border: 8px solid #ddd;
+            background-color: #f5f5f5;
+            border: 7px solid #aaa;
             border-radius: 2px;
             overflow: hidden;
+            position: relative;
         }
         
         .cell {
-            background-color: #f5f5f5;
+            border: 0.5px solid #ddd;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background-color 0.2s;
+            z-index: 10;
         }
         
         .cell:hover {
-            background-color: #ddd;
+            border: 1px solid #ff6600;
             cursor: pointer;
         }
         
@@ -73,18 +74,8 @@
         }
 
         .ball {
-            width: 65%;
-            height: 65%;
-            background-size: contain;
-            background-repeat: no-repeat;
-        }
-
-        .garland {
-            width: 95%;
-            height: 95%;
-            background-image: url('assets/garland.png');
-            background-size: contain;
-            background-repeat: no-repeat;
+            width: 65% !important;
+            height: 65% !important;
         }
 
         .bird {
@@ -95,16 +86,27 @@
             background-repeat: no-repeat;
             background-position: center;
         }
-        
-        .object {
-            width: 80%;
-            height: 80%;
+
+        .rug {
+            position: absolute;
+            z-index: 1;
+            background-image: url('assets/rug.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            left: 49.6%;
+            width: 25%;
+            height: 37.5%;
+            top: 37.1%;
+            border: 2px solid #a6ccff;
         }
-        
-        .controls {
-            margin-top: 20px;
-            display: flex;
-            gap: 15px;
+
+        .object {
+            width: 95%;
+            height: 95%;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
         }
         
         button {
@@ -479,7 +481,7 @@
                                         if (currentSceneInd === 0) {
                                             door.style.backgroundColor = 'rgba(255, 102, 0, 0.5)';
                                             setTimeout(() => {
-                                                door.style.backgroundColor = 'initial';
+                                                door.style.backgroundColor = '#f5f5f5';
                                             }, 800);
                                         }
                                     }, 7000);
@@ -917,7 +919,7 @@
                                     const item = document.createElement('div');
                                     item.className = 'inventory-item';
                                     item.id = ball.id + 'item';
-                                    item.style.backgroundImage = `url('assets/${ball.id}.png')`;
+                                    item.style.backgroundImage = `url('assets/${ball.id}')`;
                                     inventory.appendChild(item);
 
                                     let index = -1;
@@ -976,6 +978,20 @@
                 }
             });
         }
+
+        function addObjectTo(row, col, classname, picture = null) {
+            const div = document.createElement('div');
+            div.className = classname;
+            if (picture) {
+                div.style.backgroundImage = `url('assets/${picture}')`;
+                div.id = picture;
+            }
+
+            cells[row][col].appendChild(div);
+            objects.push({ id: picture, row: row, col: col });
+
+            return div;
+        }
         
         // Initialize the game
         function initFirstScreen() {
@@ -1033,7 +1049,6 @@
             gameField.style['grid-template-columns'] = `repeat(${colsCount}, 1fr)`;
             gameField.style['aspect-ratio'] = '1 / 2';
 
-
             cells = [];
             objects = [];
             
@@ -1058,19 +1073,10 @@
             updatePosition(s);
 
             // гирлянда
-            const garl = document.createElement('div');
-            garl.className = 'garland';
-            garl.id = 'garland';
-            cells[1][colsCount - 1].appendChild(garl);
-            objects.push({ id: 'garland', row: 1, col: colsCount - 1 });
+            addObjectTo(1, colsCount - 1, 'object', 'garland.png');
 
             // шарики
             for (let i = 1; i <= 5; i++) {
-                const ball = document.createElement('div');
-                ball.className = 'ball';
-                ball.id = 'ball' + i;
-                ball.style['background-image'] = `url('assets/ball${i}.png')`;
-
                 let ballRow, ballCol;
 
                 ballRow = Math.floor(Math.random() * (rowsCount - 2)) + 1; // random from 1 to rowsCount - 2
@@ -1081,8 +1087,8 @@
                     ballCol = Math.floor(Math.random() * colsCount); // from 0 to rowsCount - 1
                 }
 
-                cells[ballRow][ballCol].appendChild(ball);
-                objects.push({ id: ball.id, row: ballRow, col: ballCol });
+                const ball = addObjectTo(ballRow, ballCol, 'object', `ball${i}.png`);
+                ball.classList.add('ball');
             }
 
             // update door
@@ -1137,6 +1143,18 @@
             updatePosition(s);
 
             // добавить мебель
+            const rug = document.createElement('div');
+            rug.className = 'rug';
+            gameField.appendChild(rug);
+
+            addObjectTo(2, 0, 'object', `chair1.png`);
+            addObjectTo(2, 2, 'object', `chair2.png`);
+            addObjectTo(3, 1, 'object', `table2.png`);
+
+            addObjectTo(1, 6, 'object', `chair3.png`);
+            addObjectTo(1, 7, 'object', `table1.png`);
+
+            addObjectTo(7, 0, 'object', `cabinet.png`);
 
             // update door
             door.style.width = '11%';
@@ -1155,7 +1173,7 @@
                 cells[character.row][character.col].appendChild(char);
             } else {
                 const char = document.createElement('div');
-                char.className = character.id;
+                char.className = `${character.id} object`;
                 char.id = character.id;
                 cells[character.row][character.col].appendChild(char);
             }
@@ -1200,7 +1218,9 @@
                     }
                 }
             } else if (object) {
-                if (Math.abs(s.row - row) <= 1 && Math.abs(s.col - col) <= 1) {
+                if (currentSceneInd === 2) {
+                    getAlert('Это просто мебель. Ничего интересного.');
+                } else if (Math.abs(s.row - row) <= 1 && Math.abs(s.col - col) <= 1) {
                     if (object.id === 'garland') {
                         startCutscene(objectDialogues[0]);
                     } else {
