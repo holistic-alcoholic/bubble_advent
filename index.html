@@ -1261,7 +1261,11 @@
             } else if (row === oleg.row && col === oleg.col) {
                 if (Math.abs(s.row - row) <= 1 && Math.abs(s.col - col) <= 1) {
                     olegIsMoving = false;
-                    startCutscene(youFoundOleg);
+                    if (recognizedOleg) {
+                        startCutscene(youFoundOleg);
+                    } else {
+                        startCutscene(olegFoundYou);
+                    }
                 } else {
                     if (recognizedOleg) {
                         getAlert('Голос от нервов у тебя совсем сел. Подойди поближе, чтобы нормально поговорить.');
@@ -1559,13 +1563,15 @@
 
                     await sleep(600);
 
-                    if (oleg.row === s.row && Math.abs(oleg.col - s.col) === 1 || oleg.col === s.col && Math.abs(oleg.row - s.row) === 1) {
-                        olegIsMoving = false;
+                    if (olegIsMoving) {
+                        if (oleg.row === s.row && Math.abs(oleg.col - s.col) === 1 || oleg.col === s.col && Math.abs(oleg.row - s.row) === 1) {
+                            olegIsMoving = false;
 
-                        if (recognizedOleg) {
-                            startCutscene(youFoundOleg);
-                        } else {
-                            startCutscene(olegFoundYou);
+                            if (recognizedOleg) {
+                                startCutscene(youFoundOleg);
+                            } else {
+                                startCutscene(olegFoundYou);
+                            }
                         }
                     }
                 }
