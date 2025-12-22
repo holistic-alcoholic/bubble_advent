@@ -582,6 +582,7 @@
                                                     callback: () => {
                                                         recognizedOleg = true;
                                                         modalSpeaker.src = `assets/oleg.png`;
+                                                        modalSpeaker.alt = 'Олег в костюме деда Мороза';
                                                         speakerName.textContent = 'Олег';
                                                     }
                                                 }
@@ -751,6 +752,7 @@
                             callback: () => {
                                 recognizedOleg = true;
                                 modalSpeaker.src = `assets/oleg.png`;
+                                modalSpeaker.alt = 'Олег в костюме деда Мороза';
                                 speakerName.textContent = 'Олег';
                             }
                         }
@@ -855,6 +857,7 @@
                                     item.className = 'inventory-item';
                                     item.id = 'garlandItem';
                                     item.src = `assets/garland.png`;
+                                    item.alt = 'гирлянда';
                                     item.loading = 'lazy';
 
                                     inventory.appendChild(item);
@@ -908,6 +911,7 @@
                                     item.className = 'inventory-item';
                                     item.id = ball.id + 'item';
                                     item.src = `assets/${ball.id}`;
+                                    item.alt = 'ёлочный шарик';
                                     item.loading = 'lazy';
 
                                     inventory.appendChild(item);
@@ -962,6 +966,7 @@
                                     item.className = 'inventory-item';
                                     item.id = ball.id + 'item';
                                     item.src = `assets/${ball.id}`;
+                                    item.alt = 'ёлочный шарик';
                                     item.loading = 'lazy';
 
                                     inventory.appendChild(item);
@@ -1029,6 +1034,7 @@
             img.src = `assets/${picture}`;
             img.id = picture;
             img.loading = 'lazy';
+            img.alt = picture;
 
             cells[row][col].appendChild(img);
             objects.push({ id: picture, row: row, col: col });
@@ -1219,6 +1225,7 @@
                 char.className = `${character.id} object`;
                 char.id = character.id;
                 char.src = `assets/chibi_${character.id}.png`;
+                char.alt = character.id == 's' ? 'микроб Серёжа' : character.id == 'oleg' ? 'микроб дед Мороз' : 'микроб Птица'; 
                 char.loading = 'lazy';
 
                 cells[character.row][character.col].appendChild(char);
@@ -1309,6 +1316,7 @@
 
                 modalContent.classList.remove('no-avatar');
                 modalSpeaker.src = info.avatar;
+                modalSpeaker.alt = info.speaker;
                 speakerName.style.display = 'initial';
                 speakerName.textContent = info.speaker;
             } else {
