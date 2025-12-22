@@ -158,7 +158,6 @@
         }
         
         .modal p {
-            /*font-size: 1.2rem;*/
             margin: 30px 0;
         }
         
@@ -186,6 +185,16 @@
 
         a {
             color: #ff6600;
+        }
+
+        .highlighted {
+            color: #ffbf1f;
+        }
+
+        ul { list-style-type: "🎁"; }
+
+        li {
+            margin: 15px 0;
         }
         
         @media (max-width: 768px) {
@@ -256,6 +265,17 @@
             
             // Only enable calendar in December
             const isDecember = currentMonth === 12;
+
+            const presents = [
+                '<p>В этот день под ёлочкой окажется что-то очень интересное... Подожди ещё немного и следи за нашими соцсетями 👀<br>',
+                '<p>В этот день под ёлочкой окажется что-то очень интересное... Подожди ещё немного и следи за нашими соцсетями 👀<br>',
+                '<p>В этот день под ёлочкой окажется что-то очень интересное... Подожди ещё немного и следи за нашими соцсетями 👀<br>',
+                '<p>В этот день под ёлочкой окажется что-то очень интересное... Подожди ещё немного и следи за нашими соцсетями 👀<br>',
+                '<p>В этот день под ёлочкой окажется что-то очень интересное... Подожди ещё немного и следи за нашими соцсетями 👀<br>',
+                '<p>В этот день под ёлочкой окажется что-то очень интересное... Подожди ещё немного и следи за нашими соцсетями 👀<br>',
+                '<p>В этот день под ёлочкой окажется что-то очень интересное... Подожди ещё немного и следи за нашими соцсетями 👀<br>',
+                '<p>В этот день под ёлочкой окажется что-то очень интересное... Подожди ещё немного и следи за нашими соцсетями 👀<br>'
+            ]
             
             // Create calendar boxes
             for (let i = 24; i <= 31; i++) {
@@ -281,7 +301,7 @@
                 dayBox.appendChild(dayText);
                 
                 // Check if box should be locked or unlocked
-                if (i > 28) {
+                if (i >= currentDay) {
                     dayBox.classList.add('locked');
                     image.src = 'assets/present-grey.png';
                 } else {
@@ -307,7 +327,7 @@
                 // Show modal after a short delay
                 setTimeout(() => {
                     modalTitle.innerHTML = `<span id="day-number">${day}</span> декабря`;
-                    modalMessage.innerHTML = '<p>Здесь будут ссылки на работы и превьюшки. Например, игра:</p><p><a href="game/start.html">тыц</a></p>';
+                    modalMessage.innerHTML = presents[day - 24];
                     modal.style.display = 'flex';
                 }, 800);
             }
