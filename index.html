@@ -266,6 +266,7 @@
                 const image = document.createElement('img');
                 image.src = 'assets/present.png';
                 image.className = 'day-box-img';
+                image.loading = 'lazy';
                 dayBox.appendChild(image);
                 
                 const dayNumber = document.createElement('div');
@@ -301,11 +302,11 @@
                 
                 // Add opened class for animation
                 box.classList.add('opened');
-                box.children[0].src = 'assets/present-green.png'
+                box.children[0].src = 'assets/present-green.png';
                 
                 // Show modal after a short delay
                 setTimeout(() => {
-                    modalTitle.innerHTML = `День <span id="day-number">${day}</span>`;
+                    modalTitle.innerHTML = `<span id="day-number">${day}</span> декабря`;
                     modalMessage.innerHTML = '<p>Здесь будут ссылки на работы и превьюшки. Например, игра:</p><p><a href="game/start.html">тыц</a></p>';
                     modal.style.display = 'flex';
                 }, 800);

@@ -54,22 +54,10 @@
             border: 1px solid #ff6600;
             cursor: pointer;
         }
-        
-        .s {
-            background-image: url('assets/chibi_s.png');
-        }
-
-        .oleg {
-            background-image: url('assets/chibi_o.png');
-        }
 
         .ball {
             width: 65% !important;
             height: 65% !important;
-        }
-
-        .bird {
-            background-image: url('assets/chibi_bird.png');
         }
 
         .rug {
@@ -89,9 +77,6 @@
         .object {
             width: 95%;
             height: 95%;
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
         }
         
         button {
@@ -175,8 +160,6 @@
             height: 250px;
             border-radius: 10px;
             margin-bottom: 10px;
-            background-size: contain;
-            background-repeat: no-repeat;
         }
         
         .speaker-name {
@@ -285,8 +268,6 @@
         .inventory-item {
             height: 95%;
             aspect-ratio: 1 / 1;
-            background-size: contain;
-            background-repeat: no-repeat;
         }
 
         .info {
@@ -391,7 +372,7 @@
                 </div>
                 <div class="dialogue" id="dialogue">
                     <div class="speaker-display">
-                        <div class="speaker-large" id="modalSpeaker"></div>
+                        <img class="speaker-large" id="modalSpeaker" loading="lazy"></img>
                         <div class="speaker-name" id="speakerName">Имя</div>
                     </div>
                     <div class="dialogue-container">
@@ -411,6 +392,8 @@
         <p>Арты персонажей: <a href="https://t.me/un_titled000" target="_blank">untitled000</a></p>
         <p>Разработка игры: <a href="https://t.me/holistic_alcoholic" target="_blank">holistic al</a></p>
         <p>Прочие картинки: сделаны с помощью Canva</p>
+        <br>
+        <p>Вернуться к адвенту: <a href="../index.html">тык</a></p>
     </footer>
 
     <script>
@@ -451,12 +434,15 @@
         let recognizedOleg = false;
         let olegIsMoving = false;
 
+        let cutsceneInProgress = false;
+        let gameEnded = false;
+
         // dialogues
 
         const birdDialogues = [
             {
                 speaker: 'Птица',
-                avatar: `url('assets/bird.png')`,
+                avatar: `assets/bird.png`,
                 dialogue: {
                     text: null,
                     question: '<p>Ох, неужели птенчик отрастил коготки и решил побороться за тело? Какая прелесть. Жаль, что надолго тебя не хватит... Или ты думал, что я пожалею тебя и отпущу? Нееет, дорогой мой. Ты больше не главный здесь.</p><p>Но разве тебе не хочется сдаться? Зачем  оставаться здесь, сидеть взаперти, пока тебя мучают и ставят на тебе опыты? Ты же знаешь, только я могу тебя защитить. Только я смогу справиться с этим.</p>',
@@ -494,7 +480,7 @@
             },
             {
                 speaker: 'Птица',
-                avatar: `url('assets/bird.png')`,
+                avatar: `assets/bird.png`,
                 dialogue: {
                     text: null,
                     question: '<p>Ха-ха-ха, обманул! Никуда я не пущу тебя, солнце мое, мои дела здесь еще не окончены... Ну-ка, давай, впускай меня обратно. Ты же не думал, что тебе взаправду удалось отобрать у меня контроль?</p>',
@@ -549,7 +535,7 @@
 
         const birdAppearance = {
             speaker: 'Птица',
-            avatar: `url('assets/bird.png')`,
+            avatar: `assets/bird.png`,
             dialogue: {
                 text: null,
                 question: '<p>БУ!!</p><p>Не ожидал? Ну как же, мой хороший, разве ты правда верил, что от меня так просто можно избавиться?... Ха! Какой наивный птенчик.</p><p>Ну что ты, не стесняйся, подойди ближе. Ты же хочешь выйти наружу, правда? Может быть, я тебе помогу. Даже на выход укажу — вот же он! Видишь, какой я добрый?</p>',
@@ -560,7 +546,7 @@
 
         const olegAppearance = {
             speaker: 'Дед Мороз',
-            avatar: `url('assets/santa.png')`,
+            avatar: `assets/santa.png`,
             dialogue: {
                 text: '<p>Дверь в углу открывается, и в комнату заходит... серьезно? Дед Мороз?! Пока ты сидел-страдал в своей палате, эти... особо одаренные сотрудники больницы устроили себе полноценный Новый год?!</p><p>Но что с ним делать-то?</p>',
                 question: '<p>🎵 All I want for Christmas is... 🎵</p>',
@@ -595,7 +581,7 @@
                                                     answers: [],
                                                     callback: () => {
                                                         recognizedOleg = true;
-                                                        modalSpeaker.style.backgroundImage = `url('assets/oleg.png')`;
+                                                        modalSpeaker.src = `assets/oleg.png`;
                                                         speakerName.textContent = 'Олег';
                                                     }
                                                 }
@@ -739,7 +725,7 @@
 
         const olegFoundYou = {
             speaker: 'Дед Мороз',
-            avatar: `url('assets/santa.png')`,
+            avatar: `assets/santa.png`,
             dialogue: {
                 text: '<p>Как бы ты не прятался, комната не очень большая. Ты сталкиваешься с Дедом Морозом и...</p>',
                 question: '<p>Серый??</p>',
@@ -764,7 +750,7 @@
                             ],
                             callback: () => {
                                 recognizedOleg = true;
-                                modalSpeaker.style.backgroundImage = `url('assets/oleg.png')`;
+                                modalSpeaker.src = `assets/oleg.png`;
                                 speakerName.textContent = 'Олег';
                             }
                         }
@@ -865,10 +851,12 @@
                                 callback: () => {
                                     hasGarland = true;
 
-                                    const item = document.createElement('div');
+                                    const item = document.createElement('img');
                                     item.className = 'inventory-item';
                                     item.id = 'garlandItem';
-                                    item.style.backgroundImage = `url('assets/garland.png')`;
+                                    item.src = `assets/garland.png`;
+                                    item.loading = 'lazy';
+
                                     inventory.appendChild(item);
 
                                     document.getElementById('garland.png').remove();
@@ -916,10 +904,12 @@
 
                                     hasBalls.push(ball.id);
 
-                                    const item = document.createElement('div');
+                                    const item = document.createElement('img');
                                     item.className = 'inventory-item';
                                     item.id = ball.id + 'item';
-                                    item.style.backgroundImage = `url('assets/${ball.id}')`;
+                                    item.src = `assets/${ball.id}`;
+                                    item.loading = 'lazy';
+
                                     inventory.appendChild(item);
 
                                     let index = -1;
@@ -968,10 +958,12 @@
 
                                     hasBalls.push(ball.id);
 
-                                    const item = document.createElement('div');
+                                    const item = document.createElement('img');
                                     item.className = 'inventory-item';
                                     item.id = ball.id + 'item';
-                                    item.style.backgroundImage = `url('assets/${ball.id}')`;
+                                    item.src = `assets/${ball.id}`;
+                                    item.loading = 'lazy';
+
                                     inventory.appendChild(item);
 
                                     let index = -1;
@@ -997,7 +989,7 @@
 
         const youFoundOleg = {
             speaker: 'Олег',
-            avatar: `url('assets/oleg.png')`,
+            avatar: `assets/oleg.png`,
             dialogue: {
                 text: '<p>Ты подходишь ближе и, еще не веря до конца, рассматриваешь человека напротив.</p><p>Это правда Олег.</p>',
                 question: '<p>Сереж?... Это реально ты? Или опять пернатая тварь?</p>',
@@ -1031,18 +1023,17 @@
             });
         }
 
-        function addObjectTo(row, col, classname, picture = null) {
-            const div = document.createElement('div');
-            div.className = classname;
-            if (picture) {
-                div.style.backgroundImage = `url('assets/${picture}')`;
-                div.id = picture;
-            }
+        function addObjectTo(row, col, classname, picture) {
+            const img = document.createElement('img');
+            img.className = classname;
+            img.src = `assets/${picture}`;
+            img.id = picture;
+            img.loading = 'lazy';
 
-            cells[row][col].appendChild(div);
+            cells[row][col].appendChild(img);
             objects.push({ id: picture, row: row, col: col });
 
-            return div;
+            return img;
         }
         
         // Initialize the game
@@ -1224,9 +1215,12 @@
             if (char) {
                 cells[character.row][character.col].appendChild(char);
             } else {
-                const char = document.createElement('div');
+                const char = document.createElement('img');
                 char.className = `${character.id} object`;
                 char.id = character.id;
+                char.src = `assets/chibi_${character.id}.png`;
+                char.loading = 'lazy';
+
                 cells[character.row][character.col].appendChild(char);
             }
         }
@@ -1307,12 +1301,14 @@
 
         // info is a dict with all the scene info
         function startCutscene(info) {
+            cutsceneInProgress = true;
+
             // figure out speaker
             if (info.speaker) {
                 modalSpeaker.style.display = 'initial';
 
                 modalContent.classList.remove('no-avatar');
-                modalSpeaker.style.backgroundImage = info.avatar;
+                modalSpeaker.src = info.avatar;
                 speakerName.style.display = 'initial';
                 speakerName.textContent = info.speaker;
             } else {
@@ -1383,6 +1379,7 @@
                 button.addEventListener("click", () => {
                     cutsceneModal.style.display = 'none';
                     button.remove();
+                    cutsceneInProgress = false;
                 });
             }
 
@@ -1507,7 +1504,9 @@
 
                 await sleep(150);
 
-                if (oleg.row === s.row && Math.abs(oleg.col - s.col) === 1 || oleg.col === s.col && Math.abs(oleg.row - s.row) === 1) {
+                if (gameEnded) return;
+
+                if (!cutsceneInProgress && (oleg.row === s.row && Math.abs(oleg.col - s.col) === 1 || oleg.col === s.col && Math.abs(oleg.row - s.row) === 1)) {
                     olegIsMoving = false;
 
                     if (recognizedOleg) {
@@ -1563,7 +1562,9 @@
 
                     await sleep(600);
 
-                    if (olegIsMoving) {
+                    if (gameEnded) return;
+
+                    if (olegIsMoving && !cutsceneInProgress) {
                         if (oleg.row === s.row && Math.abs(oleg.col - s.col) === 1 || oleg.col === s.col && Math.abs(oleg.row - s.row) === 1) {
                             olegIsMoving = false;
 
@@ -1579,6 +1580,8 @@
         }
 
         function endGame(ending) {
+            gameEnded = true;
+
             document.getElementById('inventory-screen').style.display = 'none';
 
             switch (ending) {
