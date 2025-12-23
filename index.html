@@ -301,7 +301,7 @@
                 dayBox.appendChild(dayText);
                 
                 // Check if box should be locked or unlocked
-                if (i >= currentDay) {
+                if (i > currentDay) {
                     dayBox.classList.add('locked');
                     image.src = 'assets/present-grey.png';
                 } else {
