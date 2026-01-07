@@ -257,14 +257,6 @@
             const modalTitle = document.getElementById('modal-title');
             const modalMessage = document.getElementById('modal-message');
             const closeModal = document.getElementById('close-modal');
-            
-            // Get current date
-            const today = new Date();
-            const currentDay = today.getDate();
-            const currentMonth = today.getMonth() + 1; // Months are 0-indexed
-            
-            // Only enable calendar in December
-            const isDecember = currentMonth === 12;
 
             const presents = [
                 '<p>В этот день вы находите под ёлочкой...' + 
@@ -291,7 +283,7 @@
                     '<ul><li>Арт с <strong class="highlighted">Шура/Маршалл</strong> от лапы! Любоваться — в <a href="https://t.me/lapulya_art/405" target="_blank">телеграме</a> или <a href="https://x.com/lapulya_art_on/status/2005926988771459096?s=20" target="_blank">в твиттере</a></li>' + '<li>Текст с <strong class="highlighted">сероволками</strong> от MParker. Читать <a href="https://archiveofourown.org/collections/bubble_advent/works/76706661" target="_blank">на ао3</a> или <a href="https://archiveofourown.gay/collections/bubble_advent/works/76706661" target="_blank">на домене gay</a></li></ul></p>',
 
                 '<p>В этот день вы находите под ёлочкой...' + 
-                    '<ul><li><a href="./game" target="_blank">Игрушку про Сережу, который пытается выбраться из психушки</a> (романтический/платонический <strong class="highlighted">сероволк</strong>) от админа и <a href="https://t.me/un_titled000" target="_blank">untitled000</a></li>' + '<li>Что-то еще? Следите за анонсами 👀</li></ul></p>'
+                    '<ul><li><a href="./game" target="_blank">Игрушку про Сережу, который пытается выбраться из психушки</a> (романтический/платонический <strong class="highlighted">сероволк</strong>) от админа и <a href="https://t.me/un_titled000" target="_blank">untitled000</a></li>' + '<li>Текст с <strong class="highlighted">птицегромами</strong> от heizwerk! Читать <a href="https://archiveofourown.org/collections/bubble_advent/works/76599486" target="_blank">на ао3</a> или <a href="https://archiveofourown.gay/collections/bubble_advent/works/76599486" target="_blank">на домене gay</a></li></ul></p>'
             ]
             
             // Create calendar boxes
@@ -317,15 +309,9 @@
                 dayBox.appendChild(dayNumber);
                 dayBox.appendChild(dayText);
                 
-                // Check if box should be locked or unlocked
-                if (i > currentDay) {
-                    dayBox.classList.add('locked');
-                    image.src = 'assets/present-grey.png';
-                } else {
-                    dayBox.addEventListener('click', function() {
-                        openBox(i);
-                    });
-                }
+                dayBox.addEventListener('click', function() {
+                    openBox(i);
+                });
                 
                 calendar.appendChild(dayBox);
             }
